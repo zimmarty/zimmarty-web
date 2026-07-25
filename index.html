@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zimmart — Buy &amp; Sell Online in Zimbabwe</title>
+<meta name="description" content="Zimmart is Zimbabwe's online marketplace. Browse cars, electronics, property, fashion and more. Post listings and connect with buyers and sellers near you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green-deep:#145A32;
+    --green-dark:#0E3F23;
+    --gold:#E8A33D;
+    --gold-deep:#C98423;
+    --bg:#FAF7F2;
+    --card:#FFFFFF;
+    --ink:#22281F;
+    --muted:#6B7263;
+    --line:#E7E2D6;
+    --danger:#C0392B;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  h1,h2,h3{font-family:'Fraunces',serif;margin:0;}
+  a{color:inherit;text-decoration:none;}
+  .price{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Header ---------- */
+  header.top{
+    background:linear-gradient(180deg,var(--green-deep),var(--green-dark));
+    padding:22px 18px 60px;
+    border-radius:0 0 28px 28px;
+    position:relative;
+  }
+  .brand-row{display:flex;align-items:center;gap:10px;}
+  .brand-mark{
+    width:38px;height:38px;border-radius:10px;
+    background:var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:700;color:var(--green-dark);
+    font-size:20px;flex:none;
+    transform:rotate(-4deg);
+  }
+  header.top h1{color:#fff;font-size:26px;font-weight:600;letter-spacing:-0.01em;}
+  .tagline{color:#DCEBD f;color:#CFE6D6;font-size:13px;margin-top:2px;}
+
+  .search-wrap{margin-top:20px;position:relative;}
+  .search-wrap input{
+    width:100%;
+    padding:14px 16px 14px 44px;
+    border-radius:12px;
+    border:none;
+    font-size:15px;
+    font-family:'Inter',sans-serif;
+    background:#fff;
+    box-shadow:0 6px 18px rgba(0,0,0,0.18);
+  }
+  .search-wrap input:focus{outline:2px solid var(--gold);}
+  .search-icon{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;color:var(--muted);
+  }
+
+  /* ---------- Category chips ---------- */
+  .chip-row{
+    display:flex;gap:10px;overflow-x:auto;
+    padding:16px 18px 4px;
+    margin-top:-38px;
+    -ms-overflow-style:none;scrollbar-width:none;
+  }
+  .chip-row::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:none;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:9px 16px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink);
+    cursor:pointer;
+    box-shadow:0 2px 6px rgba(20,90,50,0.06);
+    white-space:nowrap;
+  }
+  .chip.active{
+    background:var(--green-deep);
+    color:#fff;
+    border-color:var(--green-deep);
+  }
+
+  /* ---------- Section headers ---------- */
+  .section-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    padding:22px 18px 10px;
+  }
+  .section-head h2{font-size:19px;font-weight:600;}
+  .section-head .eyebrow{
+    display:block;font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--gold-deep);margin-bottom:2px;
+  }
+  .count-pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;color:var(--muted);
+  }
+
+  /* ---------- Listing grid ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+    padding:0 18px;
+  }
+  @media (min-width:640px){ .grid{grid-template-columns:repeat(3,1fr);} }
+  @media (min-width:960px){ .grid{grid-template-columns:repeat(4,1fr);} }
+
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    overflow:hidden;
+    border:1px solid var(--line);
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+    display:flex;flex-direction:column;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(20,90,50,0.12);}
+  .card .thumb{
+    width:100%;aspect-ratio:1/1;object-fit:cover;
+    background:#EFE9DC;
+    display:block;
+  }
+  .card .thumb.placeholder{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;}
+  .card-body{padding:10px 11px 12px;display:flex;flex-direction:column;gap:5px;flex:1;}
+  .card-title{
+    font-size:13.5px;font-weight:600;line-height:1.25;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .tag-price{
+    display:inline-flex;align-items:center;gap:5px;
+    color:var(--green-dark);font-weight:600;font-size:14.5px;
+    position:relative;width:fit-content;
+  }
+  .tag-price::before{
+    content:'';
+    width:7px;height:7px;border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--gold-deep);
+    flex:none;
+  }
+  .card-loc{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+  .seller-row{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:auto;padding-top:6px;border-top:1px solid var(--line);
+    font-size:11px;color:var(--muted);
+  }
+  .seller-name{display:flex;align-items:center;gap:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .avatar-dot{
+    width:16px;height:16px;border-radius:50%;
+    background:var(--green-deep);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:9px;font-weight:700;flex:none;
+  }
+
+  .empty-state, .loading-state{
+    padding:60px 20px;text-align:center;color:var(--muted);
+  }
+  .empty-state h3{font-size:18px;margin-bottom:6px;color:var(--ink);}
+  .spinner{
+    width:26px;height:26px;border-radius:50%;
+    border:3px solid var(--line);border-top-color:var(--green-deep);
+    margin:0 auto 14px;animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(14,63,35,0.55);
+    display:none;align-items:flex-end;justify-content:center;
+    z-index:50;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--bg);
+    width:100%;max-width:520px;
+    border-radius:22px 22px 0 0;
+    max-height:88vh;overflow-y:auto;
+    animation:slideup .22s ease;
+  }
+  @media (min-width:640px){
+    .modal-overlay{align-items:center;}
+    .modal{border-radius:22px;}
+  }
+  @keyframes slideup{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .modal-close{
+    position:sticky;top:0;display:flex;justify-content:flex-end;
+    padding:12px 14px 0;z-index:2;
+  }
+  .modal-close button{
+    background:rgba(0,0,0,0.35);color:#fff;border:none;
+    width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;
+  }
+  .modal-img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#EFE9DC;margin-top:-32px;}
+  .modal-body{padding:18px 20px 26px;}
+  .modal-body h2{font-size:21px;margin-bottom:6px;}
+  .modal-price{font-size:22px;font-weight:600;color:var(--green-dark);margin-bottom:10px;}
+  .modal-meta{font-size:13px;color:var(--muted);margin-bottom:14px;display:flex;gap:14px;flex-wrap:wrap;}
+  .modal-desc{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:18px;white-space:pre-wrap;}
+  .seller-card{
+    display:flex;align-items:center;gap:10px;
+    background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:12px;margin-bottom:16px;
+  }
+  .seller-avatar-lg{
+    width:40px;height:40px;border-radius:50%;background:var(--green-deep);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-weight:700;flex:none;
+  }
+  .contact-row{display:flex;gap:10px;}
+  .btn{
+    flex:1;padding:13px;border-radius:11px;border:none;
+    font-family:'Inter',sans-serif;font-weight:600;font-size:14px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+  }
+  .btn-whatsapp{background:#25D366;color:#fff;}
+  .btn-call{background:var(--green-deep);color:#fff;}
+
+  footer{
+    text-align:center;padding:36px 18px 10px;
+    color:var(--muted);font-size:12px;
+  }
+
+  /* ---------- Post FAB ---------- */
+  .fab-post{
+    position:fixed;right:18px;bottom:22px;z-index:40;
+    background:var(--gold);color:var(--green-dark);
+    border:none;border-radius:999px;
+    padding:15px 20px 15px 16px;
+    display:flex;align-items:center;gap:8px;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:14.5px;
+    box-shadow:0 10px 24px rgba(20,90,50,0.28);
+    cursor:pointer;
+  }
+  .fab-post svg{width:19px;height:19px;flex:none;}
+
+  /* ---------- App banner ---------- */
+  .app-banner{
+    margin:22px 18px 0;
+    background:var(--green-deep);
+    border-radius:16px;
+    padding:16px 18px;
+    display:flex;align-items:center;gap:14px;
+    color:#fff;
+  }
+  .app-banner .banner-text{flex:1;}
+  .app-banner .banner-text h3{font-size:14.5px;font-weight:600;margin-bottom:3px;color:#fff;}
+  .app-banner .banner-text p{margin:0;font-size:12px;color:#CFE6D6;line-height:1.4;}
+  .app-banner a.banner-btn{
+    flex:none;background:var(--gold);color:var(--green-dark);
+    font-weight:700;font-size:13px;padding:10px 16px;border-radius:10px;
+    white-space:nowrap;
+  }
+
+  /* ---------- Post modal form ---------- */
+  .form-group{margin-bottom:14px;}
+  .form-group label{
+    display:block;font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:6px;
+  }
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group input[type="tel"],
+  .form-group select,
+  .form-group textarea{
+    width:100%;padding:12px 13px;border-radius:10px;
+    border:1px solid var(--line);font-family:'Inter',sans-serif;font-size:14px;
+    background:#fff;color:var(--ink);
+  }
+  .form-group textarea{resize:vertical;min-height:80px;}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+    outline:2px solid var(--gold);border-color:transparent;
+  }
+  .form-row{display:flex;gap:10px;}
+  .form-row .form-group{flex:1;}
+  .photo-drop{
+    border:1.5px dashed var(--line);border-radius:12px;
+    padding:16px;text-align:center;cursor:pointer;
+    color:var(--muted);font-size:13px;position:relative;
+    background:#fff;
+  }
+  .photo-drop img{max-width:100%;max-height:160px;border-radius:8px;display:block;margin:0 auto;}
+  .photo-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .form-error{color:var(--danger);font-size:12.5px;margin-top:8px;min-height:16px;}
+  .btn-submit{
+    width:100%;padding:14px;border-radius:11px;border:none;
+    background:var(--green-deep);color:#fff;font-weight:700;font-size:15px;
+    cursor:pointer;margin-top:6px;
+  }
+  .btn-submit:disabled{opacity:0.6;cursor:default;}
+  .btn-submit .spinner{display:none;width:16px;height:16px;border-width:2px;margin:0;vertical-align:-3px;margin-right:6px;}
+  .btn-submit.loading .spinner{display:inline-block;}
+
+  .toast{
+    position:fixed;left:50%;bottom:24px;transform:translate(-50%,120%);
+    background:var(--green-dark);color:#fff;padding:13px 20px;border-radius:12px;
+    font-size:13.5px;font-weight:600;z-index:60;
+    transition:transform .25s ease;box-shadow:0 10px 24px rgba(0,0,0,0.25);
+  }
+  .toast.show{transform:translate(-50%,0);}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand-row">
+    <div class="brand-mark">Z</div>
+    <div>
+      <h1>Zimmart</h1>
+      <div class="tagline">Buy &amp; sell anything, near you</div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" type="text" placeholder="Search for electronics, fashion, cars…">
+  </div>
+</header>
+
+<div class="app-banner">
+  <div class="banner-text">
+    <h3>Want the full Zimmart experience?</h3>
+    <p>Get the app for favorites, chat with sellers, and more.</p>
+  </div>
+  <a class="banner-btn" id="downloadApkBtn" href="#" target="_blank" rel="noopener">Download APK</a>
+</div>
+
+<nav class="chip-row" id="chipRow"></nav>
+
+<div class="section-head">
+  <div>
+    <span class="eyebrow">Live from Zimmart</span>
+    <h2 id="sectionTitle">All listings</h2>
+  </div>
+  <span class="count-pill" id="countPill"></span>
+</div>
+
+<div id="listingsArea">
+  <div class="loading-state"><div class="spinner"></div>Loading listings…</div>
+</div>
+
+<footer>Zimmart · a Zimbabwean marketplace</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-close"><button id="modalCloseBtn">✕</button></div>
+    <img class="modal-img" id="modalImg" alt="">
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<button class="fab-post" id="fabPostBtn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  Post an ad
+</button>
+
+<div class="modal-overlay" id="postModalOverlay">
+  <div class="modal">
+    <div class="modal-close"><button id="postModalCloseBtn">✕</button></div>
+    <div class="modal-body">
+      <h2 style="margin-bottom:16px;">Post an ad</h2>
+      <form id="postForm">
+
+        <div class="form-group">
+          <label for="p_photo">Photo</label>
+          <div class="photo-drop" id="photoDrop">
+            <span id="photoDropText">Tap to add a photo</span>
+            <img id="photoPreview" style="display:none;">
+            <input type="file" id="p_photo" accept="image/*">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="p_title">Title</label>
+          <input type="text" id="p_title" placeholder="e.g. Toyota Hilux 2018" required maxlength="80">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="p_price">Price (USD)</label>
+            <input type="number" id="p_price" placeholder="0" required min="0" step="any">
+          </div>
+          <div class="form-group">
+            <label for="p_category">Category</label>
+            <select id="p_category" required>
+              <option value="" disabled selected>Choose</option>
+              <option>Vehicles</option>
+              <option>Electronics</option>
+              <option>Property</option>
+              <option>Fashion</option>
+              <option>Food & Drinks</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="p_location">Location</label>
+          <input type="text" id="p_location" placeholder="e.g. Harare, Borrowdale" required maxlength="60">
+        </div>
+
+        <div class="form-group">
+          <label for="p_description">Description</label>
+          <textarea id="p_description" placeholder="Describe your item…" maxlength="1000"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="p_seller">Your name</label>
+            <input type="text" id="p_seller" placeholder="e.g. Tendai M." required maxlength="40">
+          </div>
+          <div class="form-group">
+            <label for="p_whatsapp">WhatsApp number</label>
+            <input type="tel" id="p_whatsapp" placeholder="e.g. 263771234567" maxlength="20">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="p_phone">Phone number (optional)</label>
+          <input type="tel" id="p_phone" placeholder="e.g. 0771234567" maxlength="20">
+        </div>
+
+        <div class="form-error" id="postFormError"></div>
+
+        <button type="submit" class="btn-submit" id="postSubmitBtn">
+          <span class="spinner"></span><span id="postSubmitLabel">Post ad</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAW-JIzTiFW5obOM9mjZwLThijYzpcUyJk",
+    authDomain: "zimmart-app.firebaseapp.com",
+    databaseURL: "https://zimmart-app-default-rtdb.firebaseio.com",
+    projectId: "zimmart-app",
+    storageBucket: "zimmart-app.firebasestorage.app",
+    messagingSenderId: "56129392282",
+    appId: "1:56129392282:web:d7b2f46ff896bfaaf6d923",
+    measurementId: "G-YFFEDRN2SL"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const storage = getStorage(app);
+
+  document.getElementById('downloadApkBtn').href = "./com_my_zimmart_v1-9.apk";
+  document.getElementById('downloadApkBtn').setAttribute('download', 'zimmart.apk');
+
+  const CATEGORIES = ["All","Vehicles","Electronics","Property","Fashion","Food & Drinks"];
+  let allListings = [];
+  let activeCategory = "All";
+  let searchTerm = "";
+
+  const chipRow = document.getElementById('chipRow');
+  const listingsArea = document.getElementById('listingsArea');
+  const sectionTitle = document.getElementById('sectionTitle');
+  const countPill = document.getElementById('countPill');
+  const searchInput = document.getElementById('searchInput');
+
+  CATEGORIES.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (cat==='All' ? ' active' : '');
+    chip.textContent = cat;
+    chip.onclick = ()=>{
+      activeCategory = cat;
+      document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      sectionTitle.textContent = cat === 'All' ? 'All listings' : cat;
+      render();
+    };
+    chipRow.appendChild(chip);
+  });
+
+  searchInput.addEventListener('input', (e)=>{
+    searchTerm = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  function timeAgo(ts){
+    if(!ts) return '';
+    const diff = Date.now() - Number(ts);
+    const m = Math.floor(diff/60000);
+    if(m < 1) return 'Just now';
+    if(m < 60) return m + 'm ago';
+    const h = Math.floor(m/60);
+    if(h < 24) return h + 'h ago';
+    const d = Math.floor(h/24);
+    if(d < 7) return d + 'd ago';
+    return Math.floor(d/7) + 'w ago';
+  }
+
+  function initials(name){
+    if(!name) return 'Z';
+    return name.trim().charAt(0).toUpperCase();
+  }
+
+  function render(){
+    let items = allListings.filter(l => !l.hidden);
+    if(activeCategory !== 'All'){
+      items = items.filter(l => (l.category||'').toLowerCase() === activeCategory.toLowerCase());
+    }
+    if(searchTerm){
+      items = items.filter(l =>
+        (l.title||'').toLowerCase().includes(searchTerm) ||
+        (l.description||'').toLowerCase().includes(searchTerm) ||
+        (l.location||'').toLowerCase().includes(searchTerm)
+      );
+    }
+    items.sort((a,b)=> Number(b.timestamp||0) - Number(a.timestamp||0));
+
+    countPill.textContent = items.length + (items.length===1?' listing':' listings');
+
+    if(items.length === 0){
+      listingsArea.innerHTML = `<div class="empty-state">
+        <h3>Nothing here yet</h3>
+        <div>Try a different category or search term.</div>
+      </div>`;
+      return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    items.forEach(item=>{
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.onclick = ()=> openModal(item);
+
+      const img = item.imageUrl1 && item.imageUrl1 !== 'null'
+        ? `<img class="thumb" src="${item.imageUrl1}" loading="lazy" alt="${escapeHtml(item.title||'')}">`
+        : `<div class="thumb placeholder">No photo</div>`;
+
+      const sellerName = item.sellerName && item.sellerName !== 'null' ? item.sellerName : 'Zimmart Seller';
+
+      card.innerHTML = `
+        ${img}
+        <div class="card-body">
+          <div class="card-title">${escapeHtml(item.title || 'Untitled')}</div>
+          <div class="tag-price price">$${escapeHtml(item.price || '0')}</div>
+          <div class="card-loc">📍 ${escapeHtml(item.location || 'Zimbabwe')}</div>
+          <div class="seller-row">
+            <span class="seller-name"><span class="avatar-dot">${initials(sellerName)}</span>${escapeHtml(sellerName)}</span>
+            <span>${timeAgo(item.timestamp)}</span>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+    listingsArea.innerHTML = '';
+    listingsArea.appendChild(grid);
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  // ---- Modal ----
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalImg = document.getElementById('modalImg');
+  const modalBody = document.getElementById('modalBody');
+  document.getElementById('modalCloseBtn').onclick = closeModal;
+  modalOverlay.addEventListener('click', (e)=>{ if(e.target === modalOverlay) closeModal(); });
+
+  function openModal(item){
+    const sellerName = item.sellerName && item.sellerName !== 'null' ? item.sellerName : 'Zimmart Seller';
+    modalImg.src = item.imageUrl1 && item.imageUrl1 !== 'null' ? item.imageUrl1 : '';
+    modalImg.style.display = item.imageUrl1 && item.imageUrl1 !== 'null' ? 'block' : 'none';
+
+    const waNumber = (item.whatsapp || '').replace(/[^0-9]/g,'');
+    const waLink = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent('Hi, I saw your listing "'+ (item.title||'') +'" on Zimmart')}` : null;
+    const phone = (item.phone || '').trim();
+
+    modalBody.innerHTML = `
+      <h2>${escapeHtml(item.title||'Untitled')}</h2>
+      <div class="modal-price price">$${escapeHtml(item.price||'0')}</div>
+      <div class="modal-meta">
+        <span>📍 ${escapeHtml(item.location||'Zimbabwe')}</span>
+        <span>🕒 ${timeAgo(item.timestamp)}</span>
+        <span>🏷️ ${escapeHtml(item.category||'General')}</span>
+      </div>
+      <div class="modal-desc">${escapeHtml(item.description || 'No description provided.')}</div>
+      <div class="seller-card">
+        <div class="seller-avatar-lg">${initials(sellerName)}</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;">${escapeHtml(sellerName)}</div>
+          <div style="font-size:12px;color:var(--muted);">Zimmart seller</div>
+        </div>
+      </div>
+      <div class="contact-row">
+        ${waLink ? `<a class="btn btn-whatsapp" href="${waLink}" target="_blank" rel="noopener">Chat on WhatsApp</a>` : ''}
+        ${phone ? `<a class="btn btn-call" href="tel:${phone}">Call seller</a>` : ''}
+      </div>
+    `;
+    modalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(){
+    modalOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // ---- Toast ----
+  const toastEl = document.getElementById('toast');
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    setTimeout(()=> toastEl.classList.remove('show'), 2600);
+  }
+
+  // ---- Post-ad modal ----
+  const postModalOverlay = document.getElementById('postModalOverlay');
+  const postForm = document.getElementById('postForm');
+  const postFormError = document.getElementById('postFormError');
+  const postSubmitBtn = document.getElementById('postSubmitBtn');
+  const postSubmitLabel = document.getElementById('postSubmitLabel');
+  const photoInput = document.getElementById('p_photo');
+  const photoPreview = document.getElementById('photoPreview');
+  const photoDropText = document.getElementById('photoDropText');
+  let selectedPhotoFile = null;
+
+  document.getElementById('fabPostBtn').onclick = ()=>{
+    postModalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  document.getElementById('postModalCloseBtn').onclick = closePostModal;
+  postModalOverlay.addEventListener('click', (e)=>{ if(e.target === postModalOverlay) closePostModal(); });
+
+  function closePostModal(){
+    postModalOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  photoInput.addEventListener('change', ()=>{
+    const file = photoInput.files[0];
+    if(!file) return;
+    selectedPhotoFile = file;
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      photoPreview.src = e.target.result;
+      photoPreview.style.display = 'block';
+      photoDropText.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  postForm.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    postFormError.textContent = '';
+
+    const title = document.getElementById('p_title').value.trim();
+    const price = document.getElementById('p_price').value.trim();
+    const category = document.getElementById('p_category').value;
+    const location = document.getElementById('p_location').value.trim();
+    const description = document.getElementById('p_description').value.trim();
+    const sellerName = document.getElementById('p_seller').value.trim();
+    const whatsapp = document.getElementById('p_whatsapp').value.trim();
+    const phone = document.getElementById('p_phone').value.trim();
+
+    if(!title || !price || !category || !location || !sellerName){
+      postFormError.textContent = 'Please fill in all required fields.';
+      return;
+    }
+    if(!whatsapp && !phone){
+      postFormError.textContent = 'Add at least a WhatsApp number or phone number so buyers can reach you.';
+      return;
+    }
+
+    postSubmitBtn.disabled = true;
+    postSubmitBtn.classList.add('loading');
+    postSubmitLabel.textContent = 'Posting…';
+
+    try{
+      const newRef = push(ref(db, 'listings'));
+      let imageUrl1 = null;
+
+      if(selectedPhotoFile){
+        const imgRef = storageRef(storage, 'listing_photos/' + newRef.key + '_' + selectedPhotoFile.name);
+        await uploadBytes(imgRef, selectedPhotoFile);
+        imageUrl1 = await getDownloadURL(imgRef);
+      }
+
+      await set(newRef, {
+        title, price, category, location, description,
+        sellerName, whatsapp, phone,
+        imageUrl1: imageUrl1 || null,
+        timestamp: Date.now(),
+        isPromoted: false,
+        hidden: false
+      });
+
+      postForm.reset();
+      selectedPhotoFile = null;
+      photoPreview.style.display = 'none';
+      photoDropText.style.display = 'block';
+      closePostModal();
+      showToast('Your ad is live!');
+    }catch(err){
+      postFormError.textContent = "Couldn't post your ad: " + err.message;
+    }finally{
+      postSubmitBtn.disabled = false;
+      postSubmitBtn.classList.remove('loading');
+      postSubmitLabel.textContent = 'Post ad';
+    }
+  });
+
+  // ---- Firebase listener ----
+  const listingsRef = ref(db, 'listings');
+  onValue(listingsRef, (snapshot)=>{
+    const data = snapshot.val() || {};
+    allListings = Object.keys(data).map(key => ({ listingKey: key, ...data[key] }));
+    render();
+  }, (error)=>{
+    listingsArea.innerHTML = `<div class="empty-state">
+      <h3>Couldn't load listings</h3>
+      <div>${escapeHtml(error.message)}</div>
+    </div>`;
+  });
+</script>
+
+</body>
+</html>
